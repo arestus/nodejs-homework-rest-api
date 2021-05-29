@@ -16,6 +16,7 @@ const schemaAddContact = Joi.object({
   phone: Joi.string().min(6).max(20).required().messages({
     "any.required": "missing required phone field",
   }),
+  favorite: Joi.boolean().optional(),
 });
 
 const schemaUpdateContact = Joi.object({
@@ -27,8 +28,15 @@ const schemaUpdateContact = Joi.object({
     })
     .required(),
   phone: Joi.string().min(6).max(20).required(),
+  favorite: Joi.boolean().optional(),
 }).messages({
   "any.required": "missing fields",
+});
+
+const schemaUpdateStatusContact = Joi.object({
+  favorite: Joi.boolean().required(),
+}).messages({
+  "any.required": "missing field favorite",
 });
 
 const validate = async (schema, obj, next) => {
@@ -49,5 +57,8 @@ module.exports = {
   },
   validationUpdateContact: (req, res, next) => {
     return validate(schemaUpdateContact, req.body, next);
+  },
+  validationUpdateStatusContact: (req, res, next) => {
+    return validate(schemaUpdateStatusContact, req.body, next);
   },
 };
