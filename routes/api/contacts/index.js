@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const Contacts = require("../../model/contacts");
+const Contacts = require("../../../controllers/contacts");
+const guard = require("../../../helpers/guard");
+
 const {
   validationAddContact,
   validationUpdateContact,
@@ -22,7 +24,7 @@ router.get("/:id", async (req, res, next) => {
     if (contact) {
       return res.json({ status: "success", code: 200, data: { contact } });
     }
-    return res.json({ status: "error", code: 404, message: "Not Founed!" });
+    return res.json({ status: "error", code: 404, message: "Not Found!" });
   } catch (e) {
     next(e);
   }
