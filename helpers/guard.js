@@ -21,4 +21,4 @@ const guard = (req, res, next) => {
   })(req, res, next);
 };
 
-module.export = guard;
+module.exports = guard;

@@ -1,48 +1,87 @@
-const Contact = require("../model/contact");
+const Contacts = require("../repositories/contacts");
+const { HttpCode } = require("../helpers/constants");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+const SECRET_KEY = process.env.SECRET_KEY;
 
-const listContacts = async () => {
-  const results = await Contact.find();
-  return results;
+const getAllContacts = async (req, res, next) => {
+  try {
+    const contacts = await Contacts.listContacts();
+    return res.json({ status: "success", code: 200, data: { contacts } });
+  } catch (error) {
+    next(e);
+  }
 };
 
-const getContactById = async (id) => {
-  const result = await Contact.findOne({ _id: id });
-  return result;
+const getContactById = async (req, res, next) => {
+  try {
+    const contact = await Contacts.getContactById(req.params.id);
+    if (contact) {
+      return res.json({ status: "success", code: 200, data: { contact } });
+    }
+    return res.json({ status: "error", code: 404, message: "Not Found!" });
+  } catch (e) {
+    next(e);
+  }
 };
 
-const removeContact = async (id) => {
-  const result = await Contact.findOneAndRemove({ _id: id });
-  return result;
+const addContact = async (req, res, next) => {
+  try {
+    const contact = await Contacts.addContact(req.body);
+    return res
+      .status(201)
+      .json({ status: "success", code: 201, data: { contact } });
+  } catch (e) {
+    next(e);
+  }
 };
 
-const addContact = async (body) => {
-  const result = await Contact.create(body);
-  return result;
+const deleteById = async (req, res, next) => {
+  try {
+    const contact = await Contacts.removeContact(req.params.id);
+    if (contact) {
+      return res.json({
+        status: "success",
+        code: 200,
+        data: { contact },
+        message: "contact deleted",
+      });
+    }
+    return res.json({ status: "error", code: 404, message: "Not found" });
+  } catch (e) {
+    next(e);
+  }
 };
 
-const updateContact = async (id, body) => {
-  const result = await Contact.findOneAndUpdate(
-    { _id: id },
-    { ...body },
-    { new: true }
-  );
-  return result;
+const updateContact = async (req, res, next) => {
+  try {
+    const contact = await Contacts.updateContact(req.params.id, req.body);
+    if (contact) {
+      return res.json({ status: "success", code: 200, data: { contact } });
+    }
+    return res.json({ status: "error", code: 404, message: "Not found" });
+  } catch (e) {
+    next(e);
+  }
 };
 
-const updateStatusContact = async (id, body) => {
-  const result = await Contact.findOneAndUpdate(
-    { _id: id },
-    { ...body },
-    { new: true }
-  );
-  return result;
+const updateStatusContact = async (req, res, next) => {
+  try {
+    const contact = await Contacts.updateStatusContact(req.params.id, req.body);
+    if (contact) {
+      return res.json({ status: "success", code: 200, data: { contact } });
+    }
+    return res.json({ status: "error", code: 404, message: "Not found" });
+  } catch (e) {
+    next(e);
+  }
 };
 
 module.exports = {
-  listContacts,
+  getAllContacts,
   getContactById,
-  removeContact,
   addContact,
+  deleteById,
   updateContact,
   updateStatusContact,
 };
