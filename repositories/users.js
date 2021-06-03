@@ -13,13 +13,13 @@ const create = async (body) => {
   return await user.save();
 };
 
-const udpateToken = async (id, token) => {
-  return await User.updateOne({ _id: id }, { token });
+const updateToken = async (id, token) => {
+  return await User.findByIdAndUpdate({ _id: id }, { token });
 };
 
 module.exports = {
   findById,
   findByEmail,
   create,
-  udpateToken,
+  updateToken,
 };

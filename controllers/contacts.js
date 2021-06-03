@@ -1,11 +1,8 @@
 const Contacts = require("../repositories/contacts");
-const { HttpCode } = require("../helpers/constants");
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
-const SECRET_KEY = process.env.SECRET_KEY;
 
 const getAllContacts = async (req, res, next) => {
   try {
+    console.log(req.user);
     const contacts = await Contacts.listContacts();
     return res.json({ status: "success", code: 200, data: { contacts } });
   } catch (error) {
