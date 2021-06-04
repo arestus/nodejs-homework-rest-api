@@ -36,11 +36,15 @@ const login = async (req, res, next) => {
         message: "Invalid credentials",
       });
     }
-    const { id } = user.id;
+    const { id, email, subscription } = user;
     const payload = { id, test: "Larisa the best" };
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "2h" });
     await Users.updateToken(id, token);
-    return res.json({ status: "succes", code: 200, data: { token } });
+    return res.json({
+      status: "succes",
+      code: 200,
+      data: { token, user: { email, subscription } },
+    });
   } catch (e) {
     next(e);
   }
@@ -50,10 +54,30 @@ const logout = async (req, res, next) => {
   try {
     const id = req.user.id;
     await Users.updateToken(id, null);
-    return res.status(HttpCode.NO_CONTENT).json({});
+    return res.status(HttpCode.NO_CONTENT).json({
+      Status: "success",
+      code: HttpCode.NO_CONTENT,
+    });
   } catch (e) {
     next(e);
   }
 };
 
-module.exports = { signup, login, logout };
+const current = async (req, res, next) => {
+  try {
+    // const user = await Users.findByEmail(req.body.email);
+    // // const { email, subscription } = user;
+    // const subscription = req.user.subscription;
+    const { email, subscription } = req.user;
+    // await Users.updateToken(id, null);
+    return res.json({
+      status: "succes",
+      code: HttpCode.OK,
+      data: { email, subscription },
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+module.exports = { signup, login, logout, current };

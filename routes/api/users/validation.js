@@ -18,12 +18,6 @@ const schemaUserLogin = Joi.object({
   }),
 });
 
-const schemaUpdateStatusContact = Joi.object({
-  favorite: Joi.boolean().required(),
-}).messages({
-  "any.required": "missing field favorite",
-});
-
 const validate = async (schema, obj, next) => {
   try {
     await schema.validateAsync(obj);
@@ -42,8 +36,5 @@ module.exports = {
   },
   validationUserLogin: (req, res, next) => {
     return validate(schemaUserLogin, req.body, next);
-  },
-  validationUpdateStatusContact: (req, res, next) => {
-    return validate(schemaUpdateStatusContact, req.body, next);
   },
 };
