@@ -3,8 +3,13 @@ const router = express.Router();
 const ctrl = require("../../../controllers/users");
 const guard = require("../../../helpers/guard");
 
-router.post("/register", ctrl.register);
-router.post("/login", ctrl.login);
+const {
+  validationUserRegistration,
+  validationUserLogin,
+} = require("./validation");
+
+router.post("/signup", validationUserRegistration, ctrl.signup);
+router.post("/login", validationUserLogin, ctrl.login);
 router.post("/logout", guard, ctrl.logout);
 
 module.exports = router;

@@ -4,21 +4,21 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const SECRET_KEY = process.env.SECRET_KEY;
 
-const register = async (req, res, next) => {
+const signup = async (req, res, next) => {
   try {
     const user = await Users.findByEmail(req.body.email);
     if (user) {
       return res.status(HttpCode.CONFLICT).json({
         status: "error",
         code: HttpCode.CONFLICT,
-        message: "Email is already used",
+        message: "Email in use",
       });
     }
-    const { id, name, email } = await Users.create(req.body);
+    const { subscription, email } = await Users.create(req.body);
     return res.status(HttpCode.CREATED).json({
       status: "succes",
       code: HttpCode.CREATED,
-      data: { id, name, email },
+      data: { email, subscription },
     });
   } catch (e) {
     next(e);
@@ -36,7 +36,7 @@ const login = async (req, res, next) => {
         message: "Invalid credentials",
       });
     }
-    const id = user.id;
+    const { id } = user.id;
     const payload = { id, test: "Larisa the best" };
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "2h" });
     await Users.updateToken(id, token);
@@ -56,4 +56,4 @@ const logout = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, logout };
+module.exports = { signup, login, logout };
