@@ -3,6 +3,7 @@ const logger = require("morgan");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const boolParser = require("express-query-boolean");
 const limiterAPI = require("./helpers/constants");
 
 const contactsRouter = require("./routes/api/contacts");
@@ -16,7 +17,7 @@ app.use(helmet());
 app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json({ limit: 10000 }));
-
+app.use(boolParser());
 app.use("/api/", rateLimit(limiterAPI));
 
 app.use("/api/users", usersRouter);

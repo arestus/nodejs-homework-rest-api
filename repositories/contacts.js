@@ -10,10 +10,11 @@ const listContacts = async (userId, query) => {
     sortByDesc,
     filter,
     favor = null,
-    limit = 5,
+    limit = 20,
     offset = 0,
+    favorite,
   } = query;
-  const optionsSearch = { owner: userId };
+  const optionsSearch = { owner: userId, ...(favorite ? { favorite } : {}) };
   if (favor !== null) {
     optionsSearch.favorite = favor;
   }
@@ -27,7 +28,7 @@ const listContacts = async (userId, query) => {
     select: filter ? filter.split("|").join(" ") : "",
     populate: {
       path: "owner",
-      select: "email",
+      select: "favorite name email",
     },
   });
   return results;
