@@ -38,11 +38,11 @@ const login = async (req, res, next) => {
     }
     const { id, email, subscription } = user;
     const payload = { id, test: "Larisa the best" };
-    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "2h" });
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "4h" });
     await Users.updateToken(id, token);
     return res.json({
       status: "succes",
-      code: 200,
+      code: HttpCode.OK,
       data: { token, user: { email, subscription } },
     });
   } catch (e) {
@@ -65,11 +65,7 @@ const logout = async (req, res, next) => {
 
 const current = async (req, res, next) => {
   try {
-    // const user = await Users.findByEmail(req.body.email);
-    // // const { email, subscription } = user;
-    // const subscription = req.user.subscription;
     const { email, subscription } = req.user;
-    // await Users.updateToken(id, null);
     return res.json({
       status: "succes",
       code: HttpCode.OK,
@@ -80,4 +76,22 @@ const current = async (req, res, next) => {
   }
 };
 
-module.exports = { signup, login, logout, current };
+const updateStatusUser = async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const user = await Users.updateUserSubscription(id, req.body);
+    const { email, subscription } = user;
+    if (user) {
+      return res.json({
+        status: "success",
+        code: HttpCode.OK,
+        payload: { email, subscription },
+      });
+    }
+    return res.json({ status: "error", code: 404, message: "Not found" });
+  } catch (e) {
+    next(e);
+  }
+};
+
+module.exports = { signup, login, logout, current, updateStatusUser };
