@@ -24,7 +24,9 @@ const getContactById = async (req, res, next) => {
     if (contact) {
       return res.json({ status: "success", code: 200, data: { contact } });
     }
-    return res.json({ status: "error", code: 404, message: "Not Found!" });
+    return res
+      .status(404)
+      .json({ status: "error", code: 404, message: "Not Found!" });
   } catch (e) {
     next(e);
   }
@@ -69,9 +71,13 @@ const updateContact = async (req, res, next) => {
       req.body
     );
     if (contact) {
-      return res.json({ status: "success", code: 200, data: { contact } });
+      return res
+        .status(200)
+        .json({ status: "success", code: 200, data: { contact } });
     }
-    return res.json({ status: "error", code: 404, message: "Not found" });
+    return res
+      .status(404)
+      .json({ status: "error", code: 404, message: "Not found" });
   } catch (e) {
     next(e);
   }
