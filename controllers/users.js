@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const fs = require("fs/promises");
 // const path = require("path");
 require("dotenv").config();
+const EmailService = require("../services/email");
+const CreateSenderNodemailer = require("../services/email-sender");
 
 // const UploadAvatarService = require("../services/local-upload");
 const UploadAvatarService = require("../services/cloud-upload");
@@ -20,11 +22,18 @@ const signup = async (req, res, next) => {
         message: "Email in use",
       });
     }
-    const { subscription, email, avatar, verifyToken } = await Users.create(
-      req.body
-    );
+    const { subscription, email, avatar, verifyToken, name } =
+      await Users.create(req.body);
 
-    //TODO : send email verify
+    try {
+      const emailService = new EmailService(
+        process.env.NODE_ENV,
+        new CreateSenderNodemailer()
+      );
+      await emailService.sendVerifyEmail(verifyToken, name, email);
+    } catch (error) {
+      console.log(error.message);
+    }
 
     return res.status(HttpCode.CREATED).json({
       status: "succes",

@@ -13,7 +13,16 @@ class CreateSenderNodemailer {
       },
     };
     let transporter = nodemailer.createTransport(config);
-    return await transporter.sendMail({ ...msg, from: process.env.EMAIL });
+    // const emailOptions = {
+    //   from: "arestus@meta.ua",
+    //   to: "arestus@gmail.com",
+    //   subject: "Nodemailer test",
+    //   text: "Привет. Мы тестируем отправку писем!",
+    // };
+    return await transporter
+      .sendMail({ ...msg, from: process.env.EMAIL })
+      .then((info) => console.log(info))
+      .catch((err) => console.log(err));
   }
 }
 
