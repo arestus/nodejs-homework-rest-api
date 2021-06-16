@@ -20,7 +20,12 @@ const signup = async (req, res, next) => {
         message: "Email in use",
       });
     }
-    const { subscription, email, avatar } = await Users.create(req.body);
+    const { subscription, email, avatar, verifyToken } = await Users.create(
+      req.body
+    );
+
+    //TODO : send email verify
+
     return res.status(HttpCode.CREATED).json({
       status: "succes",
       code: HttpCode.CREATED,
@@ -35,7 +40,7 @@ const login = async (req, res, next) => {
   try {
     const user = await Users.findByEmail(req.body.email);
     const isValidPassword = await user?.isValidPassword(req.body.password);
-    if (!user || !isValidPassword) {
+    if (!user || !isValidPassword || !user.verify) {
       return res.status(HttpCode.UNAUTHORIZED).json({
         status: "error",
         code: HttpCode.UNAUTHORIZED,
