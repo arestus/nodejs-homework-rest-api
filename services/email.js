@@ -1,11 +1,17 @@
 const Mailgen = require("mailgen");
 require("dotenv").config();
+const ngrok = require("ngrok");
+
+const url = (async function () {
+  const connect = await ngrok.connect();
+  return connect;
+})();
 
 class EmailService {
   constructor(env, sender) {
     this.sender = sender;
     switch (env) {
-      case "developmnet":
+      case "development":
         this.link = "http://localhost:3000";
         break;
       case "production":

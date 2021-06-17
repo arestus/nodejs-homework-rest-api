@@ -1,13 +1,15 @@
-const Users = require("../repositories/users");
-const { HttpCode } = require("../helpers/constants");
 const jwt = require("jsonwebtoken");
 const fs = require("fs/promises");
-// const path = require("path");
-require("dotenv").config();
 const EmailService = require("../services/email");
-const CreateSenderNodemailer = require("../services/email-sender");
+const Users = require("../repositories/users");
+const { HttpCode } = require("../helpers/constants");
+const {
+  CreateSenderSendGrid,
+  CreateSenderNodemailer,
+} = require("../services/email-sender");
 
-// const UploadAvatarService = require("../services/local-upload");
+require("dotenv").config();
+
 const UploadAvatarService = require("../services/cloud-upload");
 
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -22,23 +24,23 @@ const signup = async (req, res, next) => {
         message: "Email in use",
       });
     }
-    const { subscription, email, avatar, verifyToken, name } =
+    const { name, email, subscription, avatar, verifyToken } =
       await Users.create(req.body);
 
     try {
       const emailService = new EmailService(
         process.env.NODE_ENV,
-        new CreateSenderNodemailer()
+        new CreateSenderSendGrid()
       );
-      await emailService.sendVerifyEmail(verifyToken, name, email);
+      await emailService.sendVerifyEmail(verifyToken, email, name);
     } catch (error) {
-      console.log(error.message);
+      console.log("Requset error:", error.message);
     }
 
     return res.status(HttpCode.CREATED).json({
       status: "succes",
       code: HttpCode.CREATED,
-      data: { email, subscription, avatar },
+      data: { email, name, subscription, avatar },
     });
   } catch (e) {
     next(e);
@@ -113,25 +115,6 @@ const updateStatusUser = async (req, res, next) => {
     next(e);
   }
 };
-
-// Local Upload
-// const avatars = async (req, res, next) => {
-//   try {
-//     const id = req.user.id;
-//     const uploads = new UploadAvatarService(process.env.AVATAR_OF_USERS);
-//     const avatarUrl = await uploads.saveAvatar({ idUser: id, file: req.file });
-//     try {
-//       await fs.unlink(path.join(process.env.AVATAR_OF_USERS, req.user.avatar));
-//     } catch (e) {
-//       console.log(e.message);
-//     }
-
-//     await Users.updateAvatar(id, avatarUrl);
-//     res.json({ status: "success", code: 200, data: { avatarUrl } });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 
 const avatars = async (req, res, next) => {
   try {
