@@ -1,19 +1,18 @@
 const Mailgen = require("mailgen");
 require("dotenv").config();
-const ngrok = require("ngrok");
 
 class EmailService {
   constructor(env, sender) {
     this.sender = sender;
     switch (env) {
       case "development":
-        this.link = "https://22e8422a711d.ngrok.io";
+        this.link = "https://731bcc240d75.ngrok.io";
         break;
       case "production":
         this.link = "link for production";
         break;
       default:
-        this.link = "http://localhost:3000";
+        this.link = "https://731bcc240d75.ngrok.io";
         break;
     }
   }

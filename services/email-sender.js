@@ -6,7 +6,10 @@ class CreateSenderSendGrid {
   async send(msg) {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     console.log("🚀 ~ file: email-sender.js ~ ", process.env.SENDGRID_API_KEY);
-    return await sgMail.send({ ...msg, from: "arestus@meta.ua" });
+    return await sgMail.send({
+      ...msg,
+      from: "Yaroslav Khazivaliev <arestus@meta.ua>",
+    });
   }
 }
 

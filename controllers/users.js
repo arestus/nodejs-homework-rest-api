@@ -30,7 +30,7 @@ const signup = async (req, res, next) => {
     try {
       const emailService = new EmailService(
         req.app.get("env"),
-        new CreateSenderNodemailer()
+        new CreateSenderSendGrid()
       );
       await emailService.sendVerifyEmail(verifyToken, email, name);
     } catch (error) {
@@ -134,4 +134,67 @@ const avatars = async (req, res, next) => {
   }
 };
 
-module.exports = { signup, login, logout, current, avatars, updateStatusUser };
+const verify = async (req, res, next) => {
+  try {
+    const user = await Users.findByVerifyToken(req.params.token);
+    if (user) {
+      await Users.updateTokenVerify(user.id, true, null);
+      return res.json({
+        status: "success",
+        code: HttpCode.OK,
+        data: { message: "Success" },
+      });
+    }
+    return res.status(HttpCode.BAD_REQUEST).json({
+      status: "error",
+      code: HttpCode.BAD_REQUEST,
+      message: "Verification token isn't valid",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const repeatEmailVerification = async (req, res, next) => {
+  try {
+    const user = await Users.findByEmail(req.body.email);
+    if (user) {
+      const { name, email, verify, verifyToken } = user;
+      if (!verify) {
+        const emailService = new EmailService(
+          req.app.get("env"),
+          new CreateSenderSendGrid()
+        );
+        await emailService.sendVerifyEmail(verifyToken, email, name);
+        return res.json({
+          status: "success",
+          code: HttpCode.OK,
+          data: { message: "Resubmitted Success!" },
+        });
+      }
+      return res.status(HttpCode.CONFLICT).json({
+        status: "error",
+        code: HttpCode.CONFLICT,
+        message: "Email has been verified",
+      });
+    }
+    return res.status(HttpCode.NOT_FOUND).json({
+      status: "error",
+      code: HttpCode.NOT_FOUND,
+      message: "User not found",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  signup,
+  login,
+  logout,
+  current,
+  avatars,
+  updateStatusUser,
+  verify,
+  repeatEmailVerification,
+};
