@@ -29,16 +29,17 @@ const signup = async (req, res, next) => {
 
     try {
       const emailService = new EmailService(
-        process.env.NODE_ENV,
-        new CreateSenderSendGrid()
+        req.app.get("env"),
+        new CreateSenderNodemailer()
       );
       await emailService.sendVerifyEmail(verifyToken, email, name);
     } catch (error) {
-      console.log("Requset error:", error.message);
+      console.log(error.response);
+      console.log("Request error:", error.message);
     }
 
     return res.status(HttpCode.CREATED).json({
-      status: "succes",
+      status: "success",
       code: HttpCode.CREATED,
       data: { email, name, subscription, avatar },
     });
@@ -63,7 +64,7 @@ const login = async (req, res, next) => {
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "4h" });
     await Users.updateToken(id, token);
     return res.json({
-      status: "succes",
+      status: "success",
       code: HttpCode.OK,
       data: { token, user: { email, subscription } },
     });
@@ -89,7 +90,7 @@ const current = async (req, res, next) => {
   try {
     const { email, subscription } = req.user;
     return res.json({
-      status: "succes",
+      status: "success",
       code: HttpCode.OK,
       data: { email, subscription },
     });
@@ -125,7 +126,6 @@ const avatars = async (req, res, next) => {
       req.user.idCloudAvatar
     );
 
-    //TODO: need delete file on folder uploads
     await fs.unlink(req.file.path);
     await Users.updateAvatar(id, avatarUrl, idCloudAvatar);
     res.json({ status: "success", code: 200, data: { avatarUrl } });

@@ -2,17 +2,12 @@ const Mailgen = require("mailgen");
 require("dotenv").config();
 const ngrok = require("ngrok");
 
-const url = (async function () {
-  const connect = await ngrok.connect();
-  return connect;
-})();
-
 class EmailService {
   constructor(env, sender) {
     this.sender = sender;
     switch (env) {
       case "development":
-        this.link = "http://localhost:3000";
+        this.link = "https://22e8422a711d.ngrok.io";
         break;
       case "production":
         this.link = "link for production";
@@ -26,26 +21,22 @@ class EmailService {
     const mailGenerator = new Mailgen({
       theme: "cerberus",
       product: {
-        name: "Sender's name",
+        name: "GoIt course",
         link: this.link,
       },
     });
     const email = {
       body: {
         name,
-        intro:
-          "Welcome to Sender's name! We're very excited to have you on board.",
+        intro: "Welcome!",
         action: {
-          instructions:
-            "To get started with  Sender's name, please click here:",
+          instructions: "To get started with please click here:",
           button: {
             color: "#22BC66", // Optional action button color
             text: "Confirm your account",
             link: `${this.link}/api/users/verify/${verifyToken}`,
           },
         },
-        outro:
-          "Need help, or have questions? Just reply to this email, we'd love to help.",
       },
     };
     return mailGenerator.generate(email);
@@ -55,7 +46,7 @@ class EmailService {
     const msg = {
       to: email,
       subject: "Verify your account",
-      hmtl: emailHtml,
+      html: emailHtml,
     };
     const result = await this.sender.send(msg);
     console.log(result);
