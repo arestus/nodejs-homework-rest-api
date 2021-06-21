@@ -1,6 +1,7 @@
 const Joi = require("joi");
 
 const schemaUserRegistration = Joi.object({
+  name: Joi.string(),
   email: Joi.string().email().required().messages({
     "any.required": "missing required email field",
   }),
