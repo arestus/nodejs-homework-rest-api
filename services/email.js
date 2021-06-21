@@ -6,13 +6,13 @@ class EmailService {
     this.sender = sender;
     switch (env) {
       case "development":
-        this.link = "https://731bcc240d75.ngrok.io";
+        this.link = " https://b41dc9b0a386.ngrok.io";
         break;
       case "production":
         this.link = "link for production";
         break;
       default:
-        this.link = "https://731bcc240d75.ngrok.io";
+        this.link = " https://b41dc9b0a386.ngrok.io";
         break;
     }
   }

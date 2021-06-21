@@ -142,7 +142,7 @@ const verify = async (req, res, next) => {
       return res.json({
         status: "success",
         code: HttpCode.OK,
-        data: { message: "Success" },
+        data: { message: "Verification successful" },
       });
     }
     return res.status(HttpCode.BAD_REQUEST).json({
@@ -169,13 +169,13 @@ const repeatEmailVerification = async (req, res, next) => {
         return res.json({
           status: "success",
           code: HttpCode.OK,
-          data: { message: "Resubmitted Success!" },
+          data: { message: "Verification email sent" },
         });
       }
       return res.status(HttpCode.CONFLICT).json({
         status: "error",
         code: HttpCode.CONFLICT,
-        message: "Email has been verified",
+        message: "Verification has already been passed",
       });
     }
     return res.status(HttpCode.NOT_FOUND).json({
